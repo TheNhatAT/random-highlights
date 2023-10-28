@@ -5,10 +5,13 @@ from celery import Celery
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
+import redis
 
 from .config import config as app_config
 
 celery = Celery(__name__)
+
+Redis = redis.Redis(host="localhost", port=6379, db=0)
 
 
 def create_app():
@@ -19,20 +22,18 @@ def create_app():
     app = Flask(app_config[APPLICATION_ENV].APP_NAME)
     app.config.from_object(app_config[APPLICATION_ENV])
 
-    CORS(app, resources={r'/api/*': {'origins': '*'}})
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     celery.config_from_object(app.config, force=True)
     # celery is not able to pick result_backend and hence using update
-    celery.conf.update(result_backend=app.config['RESULT_BACKEND'])
+    celery.conf.update(result_backend=app.config["RESULT_BACKEND"])
 
     from .core.views import core as core_blueprint
-    app.register_blueprint(
-        core_blueprint,
-        url_prefix='/api/v1/core'
-    )
+
+    app.register_blueprint(core_blueprint, url_prefix="/api/v1/core")
 
     return app
 
 
 def get_environment():
-    return environ.get('APPLICATION_ENV') or 'development'
+    return environ.get("APPLICATION_ENV") or "development"
