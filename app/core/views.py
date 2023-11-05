@@ -30,8 +30,8 @@ def highlights():
 
 @core.route("/read-email", methods=["GET"])
 def handle_mails():
-    handle_read_mails()
-    return {"message": "Emails read successfully"}
+    highlights = handle_read_mails()
+    return jsonify(highlights)
 
 
 @core.route("/restricted", methods=["GET"])

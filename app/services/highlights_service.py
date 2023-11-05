@@ -5,14 +5,7 @@ from app import Redis
 import re
 
 
-def handle_highlight():
-    with open(
-        "./data/James Clear - Atomic Habits_ Tiny Changes, Remarkable Results-Penguin Publishing Group (2018) - Notebook.html",
-        "r",
-        encoding="utf-8",
-    ) as f:
-        html = f.read()
-
+def handle_highlight(html):
     soup = BeautifulSoup(html, "html.parser")
 
     highlights = []

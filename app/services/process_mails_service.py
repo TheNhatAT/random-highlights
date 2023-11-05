@@ -4,6 +4,8 @@ from os import environ
 import os
 from dotenv import load_dotenv
 
+from app.services.highlights_service import handle_highlight
+
 load_dotenv()
 
 
@@ -48,17 +50,8 @@ def handle_read_mails():
                     # download attachments
                     for part in email_message.walk():
                         if part.get_content_disposition() == "attachment":
-                            filename = part.get_filename()
-                            if filename:
-                                # define subject
-                                subject = str(email_message.get("Subject"))
-                                if not os.path.isdir(subject):
-                                    os.mkdir(subject)
-                                filepath = os.path.join(subject, filename)
-                                print("filepath", filepath)
-                                # download attachment and save it
-                                open(filepath, "wb").write(
-                                    part.get_payload(decode=True)
-                                )
+                            payload = part.get_payload(decode=True)
+                            return handle_highlight(payload)
+
     except Exception as e:
         print(e)
