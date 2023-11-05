@@ -3,6 +3,7 @@ from flask import Blueprint, current_app
 from werkzeug.local import LocalProxy
 from flask import jsonify
 from app.decorators.authentication import require_appkey
+from app.services.process_mails_service import handle_read_mails
 from .tasks import test_task
 
 core = Blueprint("core", __name__)
@@ -25,6 +26,12 @@ def test():
 def highlights():
     highlights = handle_highlight()
     return jsonify(highlights)
+
+
+@core.route("/read-email", methods=["GET"])
+def handle_mails():
+    handle_read_mails()
+    return {"message": "Emails read successfully"}
 
 
 @core.route("/restricted", methods=["GET"])
